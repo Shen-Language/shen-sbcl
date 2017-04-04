@@ -9,4 +9,4 @@ install:
   - mkdir Native
   - cp -R klambda/. .
 script:
-  - echo "script"
+  - sbcl --load install.lsp
