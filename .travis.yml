@@ -6,6 +6,7 @@ addons:
     packages:
       - sbcl
 install:
-  - echo "install"
+  - mkdir Native
+  - cp -R klambda/. .
 script:
   - echo "script"
