@@ -1,0 +1,11 @@
+notifications:
+  email: false
+language: generic
+addons:
+  apt:
+    packages:
+      - sbcl
+install:
+  - echo "install"
+script:
+  - echo "script"
