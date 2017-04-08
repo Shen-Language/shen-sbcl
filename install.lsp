@@ -140,5 +140,5 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE."
 (SAVE-LISP-AND-DIE "Shen.exe"
                    :EXECUTABLE T
                    :SAVE-RUNTIME-OPTIONS T
-                   :TOPLEVEL 'shen.shen)
+                   :TOPLEVEL 'SHEN-TOPLEVEL)
 

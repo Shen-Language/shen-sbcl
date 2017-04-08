@@ -245,3 +245,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE."
 (SETQ *sterror* *ERROR-OUTPUT*)
 
 (DEFUN number? (N) (IF (NUMBERP N) 'true 'false))
+
+(DEFUN SHEN-TOPLEVEL ()
+  (HANDLER-CASE (shen.shen)
+                (SB-SYS:INTERACTIVE-INTERRUPT ()
+                                              (FORMAT T "~%Quit.~%")
+                                              (EXIT))))
