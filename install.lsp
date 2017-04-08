@@ -137,5 +137,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE."
 
 (MAPC 'FMAKUNBOUND '(boot writefile openfile))
 
-(SAVE-LISP-AND-DIE "Shen.exe" :EXECUTABLE T :TOPLEVEL 'shen.shen)
+(SAVE-LISP-AND-DIE "Shen.exe"
+                   :EXECUTABLE T
+                   :SAVE-RUNTIME-OPTIONS T
+                   :TOPLEVEL 'shen.shen)
 
