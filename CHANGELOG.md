@@ -12,3 +12,6 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 - `*sterror*` standard error output.
 - `(exit N)` function.
 
+### Changed
+
+- The shen executable no longer processes SBCL command line arguments.
