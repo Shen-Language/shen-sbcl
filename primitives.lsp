@@ -248,6 +248,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE."
 
 (DEFUN SHEN-TOPLEVEL ()
   (HANDLER-CASE (shen.shen)
-                (SB-SYS:INTERACTIVE-INTERRUPT ()
-                                              (FORMAT T "~%Quit.~%")
-                                              (EXIT))))
+   (SB-SYS:INTERACTIVE-INTERRUPT ()
+     (FORMAT T "~%Quit.~%")
+     (EXIT))))
