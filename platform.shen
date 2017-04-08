@@ -1,5 +1,4 @@
-
-\*                                                   
+\*
 Copyright (c) 2010-2015, Mark Tarver
 
 All rights reserved.
@@ -32,10 +31,10 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 (package lisp []
 
   (defmacro platform-macro
-     F -> (if (symbol? F) 
+     F -> (if (symbol? F)
               (let Str (str F)
                    (if (lisp-call? Str)
-                       [protect (intern (call-lisp Str))] 
+                       [protect (intern (call-lisp Str))]
                        F))
               F))
 
@@ -43,7 +42,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     (@s ($ lisp.) _) -> true
     _ -> false)
 
-  (define call-lisp 
+  (define call-lisp
     (@s ($ lisp.) S) -> (uppercase S))
 
  (define uppercase
@@ -52,9 +51,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     (@s S Ss) -> (@s (uppercase-letter S) (uppercase Ss)))
 
   (define uppercase-letter
-     S -> (let ASCII (string->n S)  
+     S -> (let ASCII (string->n S)
                (if (and (>= ASCII 97) (<= ASCII 122))
                    (n->string (- ASCII 32))
                    S))) )
-                   
-       
+

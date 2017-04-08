@@ -34,9 +34,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE."
                 X
                 (shen.lazyderef Value ProcessN)))
        X))
-                                    
+
 (DEFUN shen.valvector (Var ProcessN)
-  (SVREF (SVREF shen.*prologvectors* ProcessN) (SVREF Var 1)))               
+  (SVREF (SVREF shen.*prologvectors* ProcessN) (SVREF Var 1)))
 
 (DEFUN shen.unbindv (Var N)
   (LET ((Vector (SVREF shen.*prologvectors* N)))
@@ -62,18 +62,18 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE."
   (LET ((Count+1 (1+ (THE INTEGER (SVREF shen.*varcounter* N))))
         (Vector (SVREF shen.*prologvectors* N)))
        (SETF (SVREF shen.*varcounter* N) Count+1)
-       (IF (= (THE INTEGER Count+1) (THE INTEGER (limit Vector))) 
+       (IF (= (THE INTEGER Count+1) (THE INTEGER (limit Vector)))
            (shen.resizeprocessvector N Count+1)
            'skip)
        (shen.mk-pvar Count+1)))
 
 (DEFUN vector-> (Vector N X)
-  (IF (ZEROP N) 
+  (IF (ZEROP N)
       (ERROR "cannot access 0th element of a vector~%")
       (address-> Vector N X)))
 
 (DEFUN <-vector (Vector N)
-  (IF (ZEROP N) 
+  (IF (ZEROP N)
       (ERROR "cannot access 0th element of a vector~%")
        (let VectorElement (SVREF Vector N)
           (IF (EQ VectorElement (fail))
@@ -82,7 +82,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE."
 
 (DEFUN variable? (X)
  (IF (AND (SYMBOLP X) (NOT (NULL X)) (UPPER-CASE-P (CHAR (SYMBOL-NAME X) 0)))
-     'true 
+     'true
      'false))
 
 (DEFUN shen.+string? (X) (IF (AND (STRINGP X) (NOT (STRING-EQUAL X "")))
@@ -91,14 +91,11 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE."
 
 (DEFUN thaw (F) (FUNCALL F))
 
-(DEFUN pr (X S) 
-      (WRITE-STRING X S) 
-      (WHEN (OR (EQ S *stoutput*) (EQ S *stinput*)) 
-        (FORCE-OUTPUT S)) 
-      X) 
+(DEFUN pr (X S)
+      (WRITE-STRING X S)
+      (WHEN (OR (EQ S *stoutput*) (EQ S *stinput*))
+        (FORCE-OUTPUT S))
+      X)
 
-(DEFUN shen.lookup-func (F SymbolTable)
-   (LET ((Entry (ASSOC F SymbolTable :TEST 'EQ)))
-      (IF (NULL Entry)
-          (ERROR "~A has no lambda expansion~%" F)
-          (CDR Entry))))
+(DEFUN exit (Code)
+  (EXIT :CODE Code))
