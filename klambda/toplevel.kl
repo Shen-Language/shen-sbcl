@@ -60,7 +60,7 @@ port " (shen.app (value *port*) (cn " ported by " (shen.app (value *porters*) "
 
 (defun shen.toplineread () (shen.toplineread_loop (read-byte (stinput)) ()))
 
-(defun shen.toplineread_loop (V3817 V3818) (cond ((= V3817 (shen.hat)) (simple-error "line read aborted")) ((element? V3817 (cons (shen.newline) (cons (shen.carriage-return) ()))) (let Line (compile (lambda X (shen.<st_input> X)) V3818 (lambda E shen.nextline)) (let It (shen.record-it V3818) (if (or (= Line shen.nextline) (empty? Line)) (shen.toplineread_loop (read-byte (stinput)) (append V3818 (cons V3817 ()))) (@p Line V3818))))) (true (shen.toplineread_loop (read-byte (stinput)) (append V3818 (cons V3817 ()))))))
+(defun shen.toplineread_loop (V3817 V3818) (cond ((and (= -1 V3817) (= () V3818)) (exit 0)) ((= V3817 (shen.hat)) (simple-error "line read aborted")) ((element? V3817 (cons (shen.newline) (cons (shen.carriage-return) ()))) (let Line (compile (lambda X (shen.<st_input> X)) V3818 (lambda E shen.nextline)) (let It (shen.record-it V3818) (if (or (= Line shen.nextline) (empty? Line)) (shen.toplineread_loop (read-byte (stinput)) (append V3818 (cons V3817 ()))) (@p Line V3818))))) (true (shen.toplineread_loop (read-byte (stinput)) (if (= V3817 -1) V3818 (append V3818 (cons V3817 ())))))))
 
 (defun shen.hat () 94)
 
