@@ -33,7 +33,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE."
 (SETF (READTABLE-CASE *READTABLE*) :PRESERVE)
 (SETQ *language* "Common Lisp")
 (SETQ *implementation* (LISP-IMPLEMENTATION-TYPE))
-(SETQ *porters* "Mark Tarver")
 (SETQ *release* "1.2")
 (SETQ *port* 2.0)
 (SETQ *porters* "Mark Tarver")
@@ -125,10 +124,21 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE."
 (LOAD "backend.fasl")
 (DELETE-FILE "backend.fasl")
 
-(MAPC 'sbcl-install '("toplevel.kl" "core.kl" "sys.kl" "sequent.kl" "yacc.kl"
-                      "reader.kl" "prolog.kl" "track.kl" "load.kl" "writer.kl"
-                      "macros.kl" "declarations.kl" "types.kl"
-                      "t-star.kl"))
+(MAPC 'sbcl-install
+      '("toplevel.kl"
+        "core.kl"
+        "sys.kl"
+        "sequent.kl"
+        "yacc.kl"
+        "reader.kl"
+        "prolog.kl"
+        "track.kl"
+        "load.kl"
+        "writer.kl"
+        "macros.kl"
+        "declarations.kl"
+        "types.kl"
+        "t-star.kl"))
 
 (COMPILE-FILE "overwrite.lsp")
 (LOAD "overwrite.fasl")
@@ -137,8 +147,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE."
 
 (MAPC 'FMAKUNBOUND '(boot writefile openfile))
 
-(SAVE-LISP-AND-DIE "Shen.exe"
+(SAVE-LISP-AND-DIE (IF (FIND :WIN32 *FEATURES*) "shen.exe" "shen")
                    :EXECUTABLE T
                    :SAVE-RUNTIME-OPTIONS T
                    :TOPLEVEL 'SHEN-TOPLEVEL)
-
