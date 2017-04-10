@@ -15,7 +15,7 @@ Example:
 
 ```
 $ cp klambda/* .
-$ sbcl < install.lsp
+$ sbcl --load install.lsp
 This is SBCL 1.3.16, an implementation of ANSI Common Lisp.
 More information about SBCL is available at <http://www.sbcl.org/>.
 
