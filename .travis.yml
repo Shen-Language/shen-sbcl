@@ -6,7 +6,6 @@ addons:
     packages:
       - sbcl
 install:
-  - mkdir Native
   - cp -R klambda/. .
 script:
   - sbcl --load install.lsp
