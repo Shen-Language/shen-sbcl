@@ -5,5 +5,7 @@ addons:
   apt:
     packages:
       - sbcl
+install:
+  - cp -R klambda/. .
 script:
-  - ./build.sh
+  - sbcl --load install.lsp
