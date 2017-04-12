@@ -24,11 +24,12 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE."
 
 ; Assumes *.kl files are in the current directory
-; Assumes ./Native directory exists
 ; Creates *.native files in the ./Native directory
 ; Deletes *.kl files
 ; Creates shen.mem file
 ; Creates and deletes *.fasl and *.intermed files over the course of running
+
+(ENSURE-DIRECTORIES-EXIST "./Native/")
 
 (PROCLAIM '(OPTIMIZE (DEBUG 0) (SPEED 3) (SAFETY 3)))
 (DECLAIM (SB-EXT:MUFFLE-CONDITIONS SB-EXT:COMPILER-NOTE))
