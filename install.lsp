@@ -87,13 +87,11 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE."
     (RENAME-FILE Lisp Rename)))
 
 (DEFUN native-name (Lisp)
-   (FORMAT NIL "Native/~{~C~}.native"
-          (nn-h (COERCE Lisp 'LIST))))
+  (FORMAT NIL "Native/~{~C~}.native" (nn-h (COERCE Lisp 'LIST))))
 
 (DEFUN nn-h (Lisp)
-  (IF (CHAR-EQUAL (CAR Lisp) #\.)
-      NIL
-      (CONS (CAR Lisp) (nn-h (CDR Lisp)))))
+  (IF (NOT (CHAR-EQUAL (CAR Lisp) #\.))
+    (CONS (CAR Lisp) (nn-h (CDR Lisp)))))
 
 (DEFUN read-in-kl (File)
   (WITH-OPEN-FILE
