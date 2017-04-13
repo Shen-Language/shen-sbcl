@@ -34,8 +34,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE."
 (PROCLAIM '(OPTIMIZE (DEBUG 0) (SPEED 3) (SAFETY 3)))
 (DECLAIM (SB-EXT:MUFFLE-CONDITIONS SB-EXT:COMPILER-NOTE))
 (SETF SB-EXT:*MUFFLED-WARNINGS* T)
-
 (IN-PACKAGE :CL-USER)
+
 (SETF (READTABLE-CASE *READTABLE*) :PRESERVE)
 (SETQ *language* "Common Lisp")
 (SETQ *implementation* (LISP-IMPLEMENTATION-TYPE))
@@ -126,13 +126,15 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE."
 
 (COMPILE 'write-out-kl)
 
-(COMPILE-FILE "primitives.lsp")
-(LOAD "primitives.fasl")
-(DELETE-FILE "primitives.fasl")
+(DEFUN import (File)
+  (LET ((SourceFile   (FORMAT NIL "~A.lsp" File))
+        (CompiledFile (FORMAT NIL "~A.fasl" File)))
+    (COMPILE-FILE SourceFile)
+    (LOAD CompiledFile)
+    (DELETE-FILE CompiledFile)))
 
-(COMPILE-FILE "backend.lsp")
-(LOAD "backend.fasl")
-(DELETE-FILE "backend.fasl")
+(import "primitives")
+(import "backend")
 
 (MAPC 'sbcl-install
       '("toplevel.kl"
@@ -150,9 +152,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE."
         "types.kl"
         "t-star.kl"))
 
-(COMPILE-FILE "overwrite.lsp")
-(LOAD "overwrite.fasl")
-(DELETE-FILE "overwrite.fasl")
+(import "overwrite")
 (load "platform.shen")
 
 (MAPC 'FMAKUNBOUND '(boot writefile openfile))
