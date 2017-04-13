@@ -27,9 +27,12 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE."
 
 (DEFMACRO if (X Y Z)
   `(LET ((*C* ,X))
-       (COND ((EQ *C* 'true) ,Y)
-             ((EQ *C* 'false) ,Z)
-             (T (ERROR "~S is not a boolean~%" *C*)))))
+    (COND ((EQ *C* 'true)
+           ,Y)
+          ((EQ *C* 'false)
+           ,Z)
+          (T
+           (ERROR "~S is not a boolean~%" *C*)))))
 
 (DEFMACRO and (X Y) `(if ,X (if ,Y 'true 'false) 'false))
 
@@ -42,7 +45,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE."
 (DEFUN simple-error (String) (ERROR "~A" String))
 
 (DEFMACRO trap-error (X F)
-`(HANDLER-CASE ,X (ERROR (Condition) (FUNCALL ,F Condition))))
+  `(HANDLER-CASE ,X (ERROR (Condition) (FUNCALL ,F Condition))))
 
 (DEFUN error-to-string (E)
    (IF (TYPEP E 'CONDITION)
@@ -117,35 +120,26 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE."
 
 (DECLAIM (INLINE read-byte))
 
-(DEFUN read-byte (S)
-  (READ-BYTE S NIL -1))
-
-;(DEFUN eos? (Stream)
- ;  (IF (LISTEN Stream) 'false 'true))
+(DEFUN read-byte (S) (READ-BYTE S NIL -1))
 
 (DEFUN open (String Direction)
-   (LET ((Path (FORMAT NIL "~A~A" *home-directory* String)))
-        (shen.openh Path Direction)))
-
-;(DEFUN shen.openh (Path Direction)
-   ;   (COND ((EQ Direction 'in)
-          ;   (OPEN Path :DIRECTION :INPUT
-           ;             :ELEMENT-TYPE 'UNSIGNED-BYTE))
-          ;  ((EQ Direction 'out)
-           ;  (OPEN Path :DIRECTION :OUTPUT
-            ;            :ELEMENT-TYPE 'UNSIGNED-BYTE
-              ;          :IF-EXISTS :SUPERSEDE))
-           ; (T (ERROR "invalid direction"))))
+  (LET ((Path (FORMAT NIL "~A~A" *home-directory* String)))
+    (shen.openh Path Direction)))
 
 (DEFUN shen.openh (Path Direction)
-      (COND ((EQ Direction 'in)
-             (OPEN Path :DIRECTION :INPUT
-                        :ELEMENT-TYPE :DEFAULT))
-            ((EQ Direction 'out)
-             (OPEN Path :DIRECTION :OUTPUT
-                        :ELEMENT-TYPE :DEFAULT
-                        :IF-EXISTS :SUPERSEDE))
-            (T (ERROR "invalid direction"))))
+  (COND ((EQ Direction 'in)
+         (OPEN Path
+          :DIRECTION    :INPUT
+          ; :ELEMENT-TYPE 'UNSIGNED-BYTE
+          :ELEMENT-TYPE :DEFAULT))
+        ((EQ Direction 'out)
+         (OPEN Path
+          :DIRECTION    :OUTPUT
+          ; :ELEMENT-TYPE 'UNSIGNED-BYTE
+          :ELEMENT-TYPE :DEFAULT
+          :IF-EXISTS    :SUPERSEDE))
+        (T
+         (ERROR "invalid direction"))))
 
 (DEFUN type (X MyType) (DECLARE (IGNORE MyType)) X)
 
@@ -164,26 +158,32 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE."
 (DEFUN string->n (S) (CHAR-CODE (CAR (COERCE S 'LIST))))
 
 (DEFUN str (X)
-  (COND ((NULL X) (ERROR "[] is not an atom in Shen; str cannot convert it to a string.~%"))
+  (COND ((NULL X)
+         (ERROR "[] is not an atom in Shen; str cannot convert it to a string.~%"))
         ((SYMBOLP X)
          (shen.process-string (SYMBOL-NAME X)))
         ((NUMBERP X)
          (shen.process-number (FORMAT NIL "~A" X)))
-        ((STRINGP X) (FORMAT NIL "~S" X))
-        ((STREAMP X) (FORMAT NIL "~A" X))
-        ((FUNCTIONP X) (FORMAT NIL "~A" X))
-        (T (ERROR "~S is not an atom, stream or closure; str cannot convert it to a string.~%" X))))
+        ((STRINGP X)
+         (FORMAT NIL "~S" X))
+        ((STREAMP X)
+         (FORMAT NIL "~A" X))
+        ((FUNCTIONP X)
+         (FORMAT NIL "~A" X))
+        (T
+         (ERROR "~S is not an atom, stream or closure; str cannot convert it to a string.~%" X))))
 
 (DEFUN shen.process-number (S)
-  (COND ((STRING-EQUAL S "") "")
+  (COND ((STRING-EQUAL S "")
+         "")
         ((STRING-EQUAL (pos S 0) "d")
-         (IF (STRING-EQUAL (pos S 1) "0")
-             ""
-             (cn "e" (tlstr S))))
-        (T (cn (pos S 0) (shen.process-number (tlstr S))))))
+         (IF (STRING-EQUAL (pos S 1) "0") "" (cn "e" (tlstr S))))
+        (T
+         (cn (pos S 0) (shen.process-number (tlstr S))))))
 
 (DEFUN shen.process-string (X)
-   (COND ((STRING-EQUAL X "") X)
+   (COND ((STRING-EQUAL X "")
+          X)
          ((AND (> (LENGTH X) 8)
                (STRING-EQUAL X "_hash1957" :END1 9))
           (cn "#" (shen.process-string (SUBSEQ X 9))))
@@ -200,11 +200,11 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE."
 
 (DEFUN get-time (Time)
   (COND ((EQ Time 'run)
-         (* 1.0 (/ (GET-INTERNAL-RUN-TIME)
-                   INTERNAL-TIME-UNITS-PER-SECOND)))
+         (* 1.0 (/ (GET-INTERNAL-RUN-TIME) INTERNAL-TIME-UNITS-PER-SECOND)))
         ((EQ Time 'unix)
-                     (- (GET-UNIVERSAL-TIME) 2208988800))
-        (T (ERROR "get-time does not understand the parameter ~A~%" Time))))
+         (- (GET-UNIVERSAL-TIME) 2208988800))
+        (T
+         (ERROR "get-time does not understand the parameter ~A~%" Time))))
 
 (DEFUN shen.double-precision (X)
   (IF (INTEGERP X) X (COERCE X 'DOUBLE-FLOAT)))
@@ -213,41 +213,40 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE."
 
 (DEFUN shen.multiply (X Y)
   (IF (OR (ZEROP X) (ZEROP Y))
-      0
-      (* (shen.double-precision X)(shen.double-precision Y))))
+    0
+    (* (shen.double-precision X) (shen.double-precision Y))))
 
 (DEFUN shen.add (X Y)
-  (+ (shen.double-precision X)(shen.double-precision Y)))
+  (+ (shen.double-precision X) (shen.double-precision Y)))
 
 (DEFUN shen.subtract (X Y)
-  (- (shen.double-precision X)(shen.double-precision Y)))
+  (- (shen.double-precision X) (shen.double-precision Y)))
 
 (DEFUN shen.divide (X Y)
   (LET ((Div (/ (shen.double-precision X)
                 (shen.double-precision Y))))
-                      (IF (INTEGERP Div)
-                           Div
-                          (* (COERCE 1.0 'DOUBLE-FLOAT) Div))))
+    (IF (INTEGERP Div)
+      Div
+      (* (COERCE 1.0 'DOUBLE-FLOAT) Div))))
 
 (DEFUN shen.greater? (X Y) (IF (> X Y) 'true 'false))
 
 (DEFUN shen.less? (X Y) (IF (< X Y) 'true 'false))
 
-(DEFUN shen.greater-than-or-equal-to? (X Y)
-	(IF (>= X Y) 'true 'false))
+(DEFUN shen.greater-than-or-equal-to? (X Y) (IF (>= X Y) 'true 'false))
 
-(DEFUN shen.less-than-or-equal-to? (X Y)
-	(IF (<= X Y) 'true 'false))
+(DEFUN shen.less-than-or-equal-to? (X Y) (IF (<= X Y) 'true 'false))
+
+(DEFUN number? (N)
+  (IF (NUMBERP N) 'true 'false))
 
 (SETF *STANDARD-TWO-WAY* (MAKE-TWO-WAY-STREAM *STANDARD-INPUT* *STANDARD-OUTPUT*))
 (SETQ *stinput* *STANDARD-TWO-WAY*)
 (SETQ *stoutput* *STANDARD-OUTPUT*)
 (SETQ *sterror* *ERROR-OUTPUT*)
 
-(DEFUN number? (N) (IF (NUMBERP N) 'true 'false))
-
 (DEFUN SHEN-TOPLEVEL ()
   (HANDLER-CASE (shen.shen)
-   (SB-SYS:INTERACTIVE-INTERRUPT ()
-     (FORMAT T "~%Quit.~%")
-     (exit 0))))
+    (SB-SYS:INTERACTIVE-INTERRUPT ()
+      (FORMAT T "~%Quit.~%")
+      (exit 0))))
