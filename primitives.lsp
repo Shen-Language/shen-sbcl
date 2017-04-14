@@ -115,10 +115,17 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE."
 
 (DEFUN <-address (Vector N) (SVREF Vector N))
 
-(DECLAIM (INLINE read-byte))
-
 (DEFUN read-byte (S)
   (READ-BYTE S NIL -1))
+
+(IF (FIND :WIN32 *FEATURES*)
+    (DEFUN read-byte (S)
+      (IF (EQ S *stinput*)
+          (LET ((C (READ-CHAR S NIL -1)))
+            (IF (EQL C #\Eot)
+                -1
+                (CHAR-INT C)))))
+    NIL)
 
 ;(DEFUN eos? (Stream)
  ;  (IF (LISTEN Stream) 'false 'true))
