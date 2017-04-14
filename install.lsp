@@ -126,15 +126,15 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE."
 
 (COMPILE 'write-out-kl)
 
-(DEFUN import (File)
+(DEFUN importfile (File)
   (LET ((SourceFile   (FORMAT NIL "~A.lsp" File))
         (CompiledFile (FORMAT NIL "~A.fasl" File)))
     (COMPILE-FILE SourceFile)
     (LOAD CompiledFile)
     (DELETE-FILE CompiledFile)))
 
-(import "primitives")
-(import "backend")
+(importfile "primitives")
+(importfile "backend")
 
 (MAPC 'sbcl-install
       '("toplevel.kl"
@@ -152,10 +152,10 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE."
         "types.kl"
         "t-star.kl"))
 
-(import "overwrite")
+(importfile "overwrite")
 (load "platform.shen")
 
-(MAPC 'FMAKUNBOUND '(boot writefile openfile))
+(MAPC 'FMAKUNBOUND '(boot writefile openfile importfile))
 
 (SAVE-LISP-AND-DIE
   (IF (FIND :WIN32 *FEATURES*) "shen.exe" "shen")
