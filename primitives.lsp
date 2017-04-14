@@ -242,7 +242,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE."
 (CLOSE *STANDARD-INPUT*)
 (SETQ *stinput* (SB-SYS:MAKE-FD-STREAM
                  (IF (FIND :WIN32 *FEATURES*)
-                     (ALIEN-FUNCALL (EXTERN-ALIEN "_get_osfhandle" (FUNCTION INT INT-PTR)) 0)
+                     (SB-WIN32:GET-OSFHANDLE 0)
                      0)
                  :INPUT T
                  :ELEMENT-TYPE '(UNSIGNED-BYTE 1)
