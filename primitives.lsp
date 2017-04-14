@@ -239,6 +239,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE."
 (DEFUN shen.less-than-or-equal-to? (X Y)
 	(IF (<= X Y) 'true 'false))
 
+(CLOSE *STANDARD-INPUT*)
 (SETQ *stinput* (SB-SYS:MAKE-FD-STREAM
                  0
                  :INPUT T
