@@ -240,10 +240,12 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE."
 	(IF (<= X Y) 'true 'false))
 
 (CLOSE *STANDARD-INPUT*)
+(SETQ *STDIN-FD* 0)
+(IF (FIND :WIN32 *FEATURES*)
+    (LOAD "win32.lsp")
+    NIL)
 (SETQ *stinput* (SB-SYS:MAKE-FD-STREAM
-                 (IF (FIND :WIN32 *FEATURES*)
-                     (SB-WIN32:GET-OSFHANDLE 0)
-                     0)
+                 *STDIN-FD*
                  :INPUT T
                  :ELEMENT-TYPE '(UNSIGNED-BYTE 1)
                  :EXTERNAL-FORMAT :UTF-8))
