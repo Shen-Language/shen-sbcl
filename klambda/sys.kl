@@ -86,7 +86,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE."
 
 (defun symbol? (V2723) (cond ((or (boolean? V2723) (or (number? V2723) (string? V2723))) false) (true (trap-error (let String (str V2723) (shen.analyse-symbol? String)) (lambda E false)))))
 
-(defun shen.analyse-symbol? (V2725) (cond ((shen.+string? V2725) (and (shen.alpha? (pos V2725 0)) (shen.alphanums? (tlstr V2725)))) (true (shen.f_error shen.analyse-symbol?))))
+(defun shen.analyse-symbol? (V2725) (cond ((= "" V2725) false) ((shen.+string? V2725) (and (shen.alpha? (pos V2725 0)) (shen.alphanums? (tlstr V2725)))) (true (shen.f_error shen.analyse-symbol?))))
 
 (defun shen.alpha? (V2727) (element? V2727 (cons "A" (cons "B" (cons "C" (cons "D" (cons "E" (cons "F" (cons "G" (cons "H" (cons "I" (cons "J" (cons "K" (cons "L" (cons "M" (cons "N" (cons "O" (cons "P" (cons "Q" (cons "R" (cons "S" (cons "T" (cons "U" (cons "V" (cons "W" (cons "X" (cons "Y" (cons "Z" (cons "a" (cons "b" (cons "c" (cons "d" (cons "e" (cons "f" (cons "g" (cons "h" (cons "i" (cons "j" (cons "k" (cons "l" (cons "m" (cons "n" (cons "o" (cons "p" (cons "q" (cons "r" (cons "s" (cons "t" (cons "u" (cons "v" (cons "w" (cons "x" (cons "y" (cons "z" (cons "=" (cons "*" (cons "/" (cons "+" (cons "-" (cons "_" (cons "?" (cons "$" (cons "!" (cons "@" (cons "~" (cons ">" (cons "<" (cons "&" (cons "%" (cons "{" (cons "}" (cons ":" (cons ";" (cons "`" (cons "#" (cons "'" (cons "." ())))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))
 
