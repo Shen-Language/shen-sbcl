@@ -124,7 +124,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE."
           (LET ((C (READ-CHAR S NIL -1)))
             (IF (EQL C #\Eot)
                 -1
-                (CHAR-INT C)))))
+                (CHAR-INT C)))
+          (READ-BYTE S NIL -1)))
     NIL)
 
 ;(DEFUN eos? (Stream)
