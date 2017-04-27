@@ -74,10 +74,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE."
     (COMPILE-FILE LspFile)
     (LOAD FaslFile)))
 
-(DEFUN nn-h (Lisp)
-  (IF (NOT (CHAR-EQUAL (CAR Lisp) #\.))
-    (CONS (CAR Lisp) (nn-h (CDR Lisp)))))
-
 (DEFUN read-in-kl (File)
   (WITH-OPEN-FILE
     (In File :DIRECTION :INPUT)
