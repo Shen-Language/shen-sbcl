@@ -93,6 +93,12 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE."
 
 (DEFUN thaw (F) (FUNCALL F))
 
+(DEFUN read-char-code (S)
+  (LET ((C (READ-CHAR S NIL -1)))
+    (IF (EQ C -1)
+        -1
+        (CHAR-INT C))))
+
 (DEFUN pr (X S)
   (WRITE-STRING X S)
   (WHEN (OR (EQ S *stoutput*) (EQ S *stinput*))
