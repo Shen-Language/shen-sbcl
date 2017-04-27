@@ -1,4 +1,5 @@
 \*
+
 Copyright (c) 2010-2015, Mark Tarver
 
 All rights reserved.
@@ -55,4 +56,3 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                (if (and (>= ASCII 97) (<= ASCII 122))
                    (n->string (- ASCII 32))
                    S))) )
-
