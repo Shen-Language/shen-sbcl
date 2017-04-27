@@ -23,13 +23,11 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE."
 
-; Assumes *.kl files are in the ./klambda directory
+; Assumes *.kl files are in the ./kernel/klambda directory
+; Creates *.kl, *.lsp and *.fasl files in the ./native directory
 ; Creates shen[.exe] file in the current directory
-; Creates *.native files in the ./Native directory
-; Creates and deletes *.fasl and *.intermed files
-;     in the current directory over the course of running
 
-(ENSURE-DIRECTORIES-EXIST "./Native/")
+(ENSURE-DIRECTORIES-EXIST "./native/")
 
 (PROCLAIM '(OPTIMIZE (DEBUG 0) (SPEED 3) (SAFETY 3)))
 (DECLAIM (SB-EXT:MUFFLE-CONDITIONS SB-EXT:COMPILER-NOTE))
@@ -44,12 +42,16 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE."
 (SETQ *porters* "Mark Tarver")
 (SETQ *os* (SOFTWARE-TYPE))
 
-(DEFUN boot (File)
-  (LET* ((KlCode (openfile File))
-         (LispCode (MAPCAR (FUNCTION (LAMBDA (X) (shen.kl-to-lisp NIL X))) KlCode))
-         (LspFile (FORMAT NIL "~A.lsp" File)))
-    (IF (PROBE-FILE LspFile) (DELETE-FILE LspFile))
-    (writefile LspFile LispCode)))
+(DEFUN safedelete (File)
+  (IF (CONSP File)
+    (MAPC 'safedelete File)
+    (IF (PROBE-FILE File) (DELETE-FILE File))))
+
+(DEFUN boot (InputFile OutputFile)
+  (LET* ((KlCode (openfile InputFile))
+         (LispCode (MAPCAR (FUNCTION (LAMBDA (X) (shen.kl-to-lisp NIL X))) KlCode)))
+    (safedelete OutputFile)
+    (writefile OutputFile LispCode)))
 
 (DEFUN writefile (File Out)
   (WITH-OPEN-FILE
@@ -68,27 +70,17 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE."
         (SETQ R (READ In NIL NIL))
         (PUSH R Rs))))
 
-(DEFUN sbcl-install (KlFile)
-  (LET* ((KlPath       (FORMAT NIL "./klambda/~A" KlFile))
-         (IntermedFile (FORMAT NIL "~A.intermed" KlFile))
-         (LspFile      (FORMAT NIL "~A.lsp" IntermedFile))
-         (FaslFile     (FORMAT NIL "~A.fasl" IntermedFile))
-         (Read         (read-in-kl KlPath)))
-    (write-out-kl IntermedFile Read)
-    (boot IntermedFile)
+(DEFUN sbcl-install (File)
+  (LET* ((KlPath       (FORMAT NIL "./kernel/klambda/~A" File))
+         (CopiedKlFile (FORMAT NIL "./native/~A.kl" File))
+         (LspFile      (FORMAT NIL "./native/~A.lsp" File))
+         (FaslFile     (FORMAT NIL "./native/~A.fasl" File))
+         (KlCode       (read-in-kl KlPath)))
+    (safedelete '(CopiedKlFile LspFile FaslFile))
+    (write-out-kl CopiedKlFile KlCode)
+    (boot CopiedKlFile LspFile)
     (COMPILE-FILE LspFile)
-    (LOAD FaslFile)
-    (DELETE-FILE IntermedFile)
-    (move-file LspFile)
-    (DELETE-FILE FaslFile)))
-
-(DEFUN move-file (Lisp)
-  (LET ((Rename (native-name Lisp)))
-    (IF (PROBE-FILE Rename) (DELETE-FILE Rename))
-    (RENAME-FILE Lisp Rename)))
-
-(DEFUN native-name (Lisp)
-  (FORMAT NIL "Native/~{~C~}.native" (nn-h (COERCE Lisp 'LIST))))
+    (LOAD FaslFile)))
 
 (DEFUN nn-h (Lisp)
   (IF (NOT (CHAR-EQUAL (CAR Lisp) #\.))
@@ -110,11 +102,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE."
     (T
      (kl-cycle (READ-CHAR In NIL NIL) In (CONS Char Chars) State))))
 
-(DEFUN flip (State) (IF (ZEROP State) 1 0))
-
-(COMPILE 'read-in-kl)
-(COMPILE 'kl-cycle)
-(COMPILE 'flip)
+(DEFUN flip (State)
+  (IF (ZEROP State) 1 0))
 
 (DEFUN write-out-kl (File Chars)
   (WITH-OPEN-FILE
@@ -124,38 +113,44 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE."
       :IF-DOES-NOT-EXIST :CREATE)
     (FORMAT Out "~{~C~}" Chars)))
 
-(COMPILE 'write-out-kl)
-
 (DEFUN importfile (File)
-  (LET ((SourceFile   (FORMAT NIL "~A.lsp" File))
-        (CompiledFile (FORMAT NIL "~A.fasl" File)))
-    (COMPILE-FILE SourceFile)
-    (LOAD CompiledFile)
-    (DELETE-FILE CompiledFile)))
+  (LET ((LspFile        (FORMAT NIL "~A.lsp" File))
+        (CopiedLspFile  (FORMAT NIL "./native/~A.lsp" File))
+        (FaslFile       (FORMAT NIL "./native/~A.fasl" File)))
+    (safedelete '(CopiedLspFile FaslFile))
+    (COPY-FILE LspFile CopiedLspFile)
+    (COMPILE-FILE LspFile)
+    (LOAD FaslFile)))
+
+(COMPILE 'read-in-kl)
+(COMPILE 'kl-cycle)
+(COMPILE 'flip)
+(COMPILE 'write-out-kl)
 
 (importfile "primitives")
 (importfile "backend")
 
-(MAPC 'sbcl-install
-      '("toplevel.kl"
-        "core.kl"
-        "sys.kl"
-        "sequent.kl"
-        "yacc.kl"
-        "reader.kl"
-        "prolog.kl"
-        "track.kl"
-        "load.kl"
-        "writer.kl"
-        "macros.kl"
-        "declarations.kl"
-        "types.kl"
-        "t-star.kl"))
+(MAPC
+  'sbcl-install
+  '("toplevel"
+    "core"
+    "sys"
+    "sequent"
+    "yacc"
+    "reader"
+    "prolog"
+    "track"
+    "load"
+    "writer"
+    "macros"
+    "declarations"
+    "types"
+    "t-star"))
 
 (importfile "overwrite")
 (load "platform.shen")
 
-(MAPC 'FMAKUNBOUND '(boot writefile openfile importfile))
+(MAPC 'FMAKUNBOUND '(safedelete boot writefile openfile importfile))
 
 (SAVE-LISP-AND-DIE
   (IF (FIND :WIN32 *FEATURES*) "shen.exe" "shen")
