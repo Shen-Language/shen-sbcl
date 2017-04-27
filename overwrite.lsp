@@ -47,17 +47,23 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE."
   (LET ((Vector (SVREF shen.*prologvectors* N)))
     (SETF (SVREF Vector (SVREF Var 1)) Val)))
 
-(DEFUN shen.copy-vector-stage-1 (V2828 V2829 V2830 V2831)
-  (IF (= V2831 V2828)
-    V2830
-    (shen.copy-vector-stage-1 (1+ V2828) V2829
-      (address-> V2830 V2828 (<-address V2829 V2828)) V2831)))
+(DEFUN shen.copy-vector-stage-1 (Count Vector BigVector Max)
+  (IF (= Max Count)
+    BigVector
+    (shen.copy-vector-stage-1
+      (1+ Count)
+      Vector
+      (address-> BigVector Count (<-address Vector Count))
+      Max)))
 
-(DEFUN shen.copy-vector-stage-2 (V2835 V2836 V2837 V2838)
-  (IF (= V2836 V2835)
-    V2838
-    (shen.copy-vector-stage-2 (1+ V2835) V2836 V2837
-      (address-> V2838 V2835 V2837))))
+(DEFUN shen.copy-vector-stage-2 (Count Max Fill BigVector)
+  (IF (= Max Count)
+    BigVector
+    (shen.copy-vector-stage-2
+      (1+ Count)
+      Max
+      Fill
+      (address-> BigVector Count Fill))))
 
 (DEFUN shen.newpv (N)
   (LET ((Count+1 (1+ (THE INTEGER (SVREF shen.*varcounter* N))))
@@ -91,7 +97,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE."
     'true
     'false))
 
-(DEFUN thaw (F) (FUNCALL F))
+(DEFUN thaw (F)
+  (FUNCALL F))
 
 (DEFUN read-char-code (S)
   (LET ((C (READ-CHAR S NIL -1)))
