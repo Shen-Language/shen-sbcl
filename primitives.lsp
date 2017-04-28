@@ -255,7 +255,12 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE."
 (SETQ *sterror* *ERROR-OUTPUT*)
 
 (DEFUN SHEN-TOPLEVEL ()
-  (HANDLER-CASE (shen.shen)
-    (SB-SYS:INTERACTIVE-INTERRUPT ()
-      (FORMAT T "~%Quit.~%")
-      (exit 0))))
+  (LET ((Args (CDR SB-EXT:*POSIX-ARGV*)))
+    (IF (CONSP Args)
+      (PROGN
+        (MAPC 'load Args)
+        (exit 0))
+      (HANDLER-CASE (shen.shen)
+        (SB-SYS:INTERACTIVE-INTERRUPT ()
+          (FORMAT T "~%Quit.~%")
+          (exit 0))))))
