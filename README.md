@@ -11,4 +11,8 @@ Fetch the kernel sources by running `./fetch.sh`/`fetch.bat`. This will download
 
 Build by running `build.sh`/`build.bat`. This will generate the `shen`/`shen.exe` executable. If the `kernel` folder is not present, `fetch` will be called first.
 
-Start the shen repl by running the executable.
+Start the Shen REPL by running the executable.
+
+Shen files can be specified on the command line, in which case they will be run sequentially and the REPL will not be started by default. The REPL can still be started by invoking `(shen.shen)`.
+
+The test suite can be run by running `./shen testsuite.shen`/`shen.exe testsuite.shen`.
