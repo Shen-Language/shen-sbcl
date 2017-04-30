@@ -1,7 +1,7 @@
 #!/bin/sh
 set -e
 
-if [ ! -f "./kernel/" ]; then
+if [ ! -d "./kernel/" ]; then
     ./fetch.sh
 fi
 
